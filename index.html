@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NAS Infrastructure Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:
+radial-gradient(circle at top right,#1e3a8a 0%,transparent 25%),
+radial-gradient(circle at bottom left,#2563eb 0%,transparent 25%),
+linear-gradient(180deg,#edf4ff,#e8f0ff);
+padding:20px;
+min-height:100vh;
+overflow-x:hidden;
+color:#0f172a;
+}
+
+#dashboard{
+max-width:1800px;
+margin:auto;
+}
+
+/* ===== HEADER ===== */
+
+.main-header{
+position:relative;
+background:linear-gradient(135deg,#020617,#0b1f4d,#1d4ed8);
+padding:50px 30px 25px;
+border-radius:30px;
+margin-bottom:20px;
+box-shadow:0 25px 60px rgba(0,0,0,.25);
+overflow:hidden;
+}
+
+.header-content{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+align-items:center;
+gap:20px;
+position:relative;
+z-index:2;
+}
+
+.nas-logo{
+font-size:80px;
+font-weight:900;
+background:linear-gradient(135deg,#fbbf24,#f59e0b,#fde68a);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.brand-sub{
+color:#dbeafe;
+font-weight:800;
+}
+
+.header-center{
+text-align:center;
+flex:1;
+}
+
+.header-center h1{
+font-size:40px;
+font-weight:900;
+color:#fff;
+}
+
+.header-center p{
+color:#c7d2fe;
+}
+
+/* ===== STATS ===== */
+
+.top-stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-top:20px;
+position:relative;
+z-index:2;
+}
+
+.top-card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border-radius:18px;
+padding:18px;
+text-align:center;
+color:#fff;
+border:1px solid rgba(255,255,255,.1);
+}
+
+.top-icon{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.top-card h2{
+font-size:28px;
+font-weight:900;
+}
+
+.top-card p{
+font-size:13px;
+font-weight:700;
+}
+
+.top-card span{
+font-size:11px;
+color:#c7d2fe;
+}
+
+/* ===== GRID ===== */
+
+.projects{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:25px;
+margin-top:20px;
+}
+
+.project-page{
+background:#fff;
+border-radius:28px;
+padding:22px;
+box-shadow:0 18px 40px rgba(0,0,0,.08);
+}
+
+/* ===== PROJECT HEADER ===== */
+
+.project-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+}
+
+.project-title{
+background:linear-gradient(135deg,#0b1f4d,#2563eb);
+color:#fff;
+padding:10px 22px;
+border-radius:50px;
+font-weight:900;
+}
+
+.project-tag{
+background:#dcfce7;
+color:#15803d;
+padding:8px 16px;
+border-radius:14px;
+font-weight:900;
+}
+
+/* ===== CIRCLE ===== */
+
+.circle-wrap{
+display:flex;
+justify-content:center;
+margin:10px 0;
+}
+
+.circle-box{
+position:relative;
+width:150px;
+height:150px;
+}
+
+.circle-text{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+}
+
+.circle-text .big{
+font-size:30px;
+font-weight:900;
+color:#16a34a;
+}
+
+.circle-text .small{
+font-size:12px;
+font-weight:800;
+color:#64748b;
+}
+
+/* ===== TABLE ===== */
+
+.table-wrapper{
+margin-top:10px;
+overflow:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:linear-gradient(135deg,#020617,#2563eb);
+color:#fff;
+}
+
+th,td{
+padding:12px;
+text-align:center;
+font-size:13px;
+font-weight:700;
+}
+
+tbody tr:nth-child(even){
+background:#f8fbff;
+}
+
+.progress-bar{
+height:8px;
+background:#e2e8f0;
+border-radius:50px;
+overflow:hidden;
+margin-bottom:6px;
+}
+
+.progress-fill{
+height:100%;
+background:linear-gradient(90deg,#16a34a,#4ade80);
+}
+
+/* ===== STATUS ===== */
+
+.item-percent{
+font-size:13px;
+font-weight:900;
+margin-bottom:2px;
+}
+
+.percent-high{ color:#16a34a; }
+.percent-low{ color:#f59e0b; }
+
+.item-status{
+font-size:11px;
+font-weight:900;
+}
+
+.status-done{ color:#16a34a; }
+.status-progress{ color:#f59e0b; }
+
+/* ===== EXPORT ===== */
+
+.export-btn{
+position:fixed;
+bottom:20px;
+left:20px;
+right:20px;
+max-width:400px;
+margin:auto;
+background:linear-gradient(135deg,#020617,#1d4ed8,#38bdf8);
+color:#fff;
+border:none;
+padding:16px;
+border-radius:18px;
+font-weight:900;
+cursor:pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width:1024px){
+.projects{
+grid-template-columns:1fr;
+}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="dashboard">
+
+<div class="main-header">
+
+<div class="header-content">
+
+<div>
+<div class="nas-logo">NAS</div>
+<div class="brand-sub">ناس للاستشارات والأعمال الهندسية</div>
+</div>
+
+<div class="header-center">
+<h1>متابعة مشاريع البنية التحتية - شركة ناس</h1>
+<p>Infrastructure Projects Monitoring Executive Dashboard</p>
+</div>
+
+</div>
+
+<div class="top-stats">
+
+<div class="top-card">
+<div class="top-icon">📁</div>
+<h2 id="projectsCount">0</h2>
+<p>إجمالي المشاريع</p>
+<span>Infrastructure Projects</span>
+</div>
+
+<div class="top-card">
+<div class="top-icon">📊</div>
+<h2 id="avgProgress">0%</h2>
+<p>متوسط الإنجاز</p>
+<span>Overall Progress</span>
+</div>
+
+<div class="top-card">
+<div class="top-icon">⚡</div>
+<h2>LIVE</h2>
+<p>تحديث يدوي</p>
+<span>Refresh To Update</span>
+</div>
+
+<div class="top-card">
+<div class="top-icon">🏗️</div>
+<h2>NAS</h2>
+<p>إدارة المشروعات</p>
+<span>Engineering Management</span>
+</div>
+
+</div>
+
+</div>
+
+<div class="projects" id="projectsContainer"></div>
+
+</div>
+
+<button class="export-btn" onclick="exportImage()">📸 تصدير التقرير</button>
+
+<script>
+
+const API_URL="https://opensheet.elk.sh/1VMA-QZ5vIyAUYjLLHUsmnh_VHS3jTdYM-o7FugMUmvE/1";
+
+const container=document.getElementById("projectsContainer");
+
+async function loadData(){
+
+const res=await fetch(API_URL);
+const data=await res.json();
+
+let grouped={};
+let totalProjects=0;
+let totalAvg=0;
+
+data.forEach(r=>{
+if(!grouped[r.project]) grouped[r.project]=[];
+grouped[r.project].push(r);
+});
+
+totalProjects=Object.keys(grouped).length;
+
+container.innerHTML="";
+
+Object.keys(grouped).forEach(pid=>{
+
+let rows="";
+let sum=0;
+let count=0;
+
+grouped[pid].forEach(r=>{
+
+let total=Number(r.total);
+let done=Number(r.completed);
+
+let percent = total ? Math.floor((done/total)*100) : 0;
+
+sum+=percent;
+count++;
+
+rows+=`
+<tr>
+<td>${r.item}</td>
+<td>${total}</td>
+<td>${done}</td>
+<td>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:${percent}%"></div>
+</div>
+
+<div class="item-percent ${percent>=100?'percent-high':'percent-low'}">
+${percent}%
+</div>
+
+<div class="item-status ${percent>=100?'status-done':'status-progress'}">
+${percent>=100?'تم الانتهاء':'قيد التنفيذ'}
+</div>
+
+</td>
+</tr>`;
+});
+
+let projectPercent = count ? Math.floor(sum/count) : 0;
+
+totalAvg += projectPercent;
+
+container.innerHTML+=`
+
+<div class="project-page">
+
+<div class="project-header">
+<div class="project-title">مشروع ${pid}</div>
+<div class="project-tag">قيد التنفيذ</div>
+</div>
+
+<div class="circle-wrap">
+<div class="circle-box">
+<canvas id="chart_${pid}"></canvas>
+
+<div class="circle-text">
+<div class="big">${projectPercent}%</div>
+<div class="small">نسبة إنجاز المشروع</div>
+</div>
+
+</div>
+</div>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>الإجمالي</th>
+<th>المنفذ</th>
+<th>الإنجاز</th>
+</tr>
+</thead>
+<tbody>
+${rows}
+</tbody>
+</table>
+</div>
+
+</div>
+
+`;
+
+setTimeout(()=>{
+
+const ctx=document.getElementById(`chart_${pid}`);
+
+new Chart(ctx,{
+type:'doughnut',
+data:{
+datasets:[{
+data:[projectPercent,100-projectPercent],
+backgroundColor:['#16a34a','#e5e7eb'],
+borderWidth:0,
+cutout:'75%'
+}]
+},
+options:{
+plugins:{legend:{display:false}}
+}
+});
+
+},200);
+
+});
+
+document.getElementById("projectsCount").innerText=totalProjects;
+
+document.getElementById("avgProgress").innerText=
+totalProjects ? Math.floor(totalAvg/totalProjects)+"%" : "0%";
+
+}
+
+loadData();
+
+async function exportImage(){
+
+const btn=document.querySelector(".export-btn");
+btn.style.display="none";
+
+const canvas=await html2canvas(document.getElementById("dashboard"),{scale:2});
+
+const a=document.createElement("a");
+a.download="NAS_Report.png";
+a.href=canvas.toDataURL();
+a.click();
+
+btn.style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
