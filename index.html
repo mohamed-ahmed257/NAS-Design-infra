@@ -388,7 +388,8 @@ grouped[pid].forEach(r=>{
 let total=Number(r.total);
 let done=Number(r.completed);
 
-let percent = total ? Math.floor((done/total)*100) : 0;
+// ✅ التعديل الوحيد هنا
+let percent = total ? Number(((done/total)*100).toFixed(1)) : 0;
 
 sum+=percent;
 count++;
@@ -416,7 +417,7 @@ ${percent>=100?'تم الانتهاء':'قيد التنفيذ'}
 </tr>`;
 });
 
-let projectPercent = count ? Math.floor(sum/count) : 0;
+let projectPercent = count ? Number((sum/count).toFixed(1)) : 0;
 
 totalAvg += projectPercent;
 
@@ -487,7 +488,7 @@ plugins:{legend:{display:false}}
 document.getElementById("projectsCount").innerText=totalProjects;
 
 document.getElementById("avgProgress").innerText=
-totalProjects ? Math.floor(totalAvg/totalProjects)+"%" : "0%";
+totalProjects ? (totalAvg/totalProjects).toFixed(1)+"%" : "0%";
 
 }
 
