@@ -377,7 +377,15 @@ totalProjects=Object.keys(grouped).length;
 
 container.innerHTML="";
 
-Object.keys(grouped).forEach(pid=>{
+/* ===== ترتيب المشاريع وخلي 111 آخر مشروع ===== */
+
+const projectKeys = Object.keys(grouped).sort((a,b)=>{
+if(a==="111") return 1;
+if(b==="111") return -1;
+return a.localeCompare(b,'en',{numeric:true});
+});
+
+projectKeys.forEach(pid=>{
 
 let rows="";
 let sum=0;
@@ -388,7 +396,6 @@ grouped[pid].forEach(r=>{
 let total=Number(r.total);
 let done=Number(r.completed);
 
-// ✅ التعديل الوحيد هنا
 let percent = total ? Number(((done/total)*100).toFixed(1)) : 0;
 
 sum+=percent;
